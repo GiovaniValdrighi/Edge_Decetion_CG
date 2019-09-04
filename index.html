@@ -59,17 +59,29 @@
 			//imgDataOut.data[i+3] = 255;
 		//}
 		
-		
+		function array_to_img(array, imgData){
+			for(let i = 0; i<imgData.length; i +=4){
+				imgData[i] = array_img[Math.floor(i/(width*4))][Math.floor(i/(height*4))];
+				imgData[i +1] = imgData[i];
+				imgData[i +2] = imgData[i];
+				imgData[i +3] = 255;
+			}
+			return imgData
+		}
 		
 		function black_n_white(imgData){
-			//use the mean of the 3 chanels
-			for (let i = 0; i < imgData	.length; i += 4){
-				aux = (imgData[i] + imgData[i+1] + imgData[i+2])/3
-				imgData[i] = aux;
-				imgData[i+1] = aux;
-				imgData[i+2] = aux;	
+			//creating empty array
+			array_img = new Array(height);
+			console.log(array_img.length);
+			for (let i = 0; i < array_img.length; i++){
+				array_img[i] = new Array(width);
 			}
-			return imgData;
+			//use the mean of the 3 chanels
+			console.log(width);
+			for (let i = 0; i < imgData.length; i += 4){
+				array_img[Math.floor(i/(width *4))][Math.floor(i/(height *4))] = (imgData[i] + imgData[i+1] + imgData[i+2])/3	
+			}
+			return array_img;
 		}
 	
 		
@@ -142,21 +154,21 @@
 				- 2* (imgData[i + 4 *width] || 0)
 				- (imgData[i + 4 + 4*width] || 0);
 				
-				new_data.push(Math.sqrt((gx*gx) + (gy*gy))>>>0);
+				new_data.push(Math.sqrt((gx*gx) + (gy*gy)));
 			}
 			
 			
 			max_imgData = arrayMax(new_data);
 			console.log(max_imgData);
 			for (let i = 0; i < 4*width*height; i += 4){
-				imgData[i] = imgData[i] * 255 / max_imgData;
+				imgData[i] = Math.round(imgData[i] * 255 / max_imgData);
 				imgData[i+1] = imgData[i];
 				imgData[i+2] = imgData[i];
 			}	
 			return imgData;
 		}
 		
-		imgDataOut.data.set(sobel_detector(gaussian_filter(gaussian_filter(black_n_white(imgDataOut.data)))));
+		imgDataOut.data.set(array_to_img(black_n_white(dataCopy), imgDataOut.data));
 		
 		//recuperar a imagem orignal
 		//imgDataOut.data.set(dataCopy);
