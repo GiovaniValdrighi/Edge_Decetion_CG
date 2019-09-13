@@ -3,179 +3,63 @@
 <head>
 	<title> Projeto A1 </title>
 	<!comment: MathJax para equações matemáticas em TeX>
-	<script type="text/javascript" async
-		src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async>
-	</script>
+	
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+	
 </head>
 
 <body>
-	<h1> Implementação da detectação de arestas de Canny</h1>
+	<div id = "fundo">
+	<div id = "topo">
+	<h1 id = "titulo">Algoritmo de detectação de aresta - Canny</br> 
+	Introdução a Computação Gráfica<h1>
+	<h3 id = "autor">Giovani de Almeida Valdrighi<h3>
+
+	</div>
+	<div id = "barra_topo"></div>
+	<div id = "corpo">
+	<h2>Detectação de aresta</h3>
+	<p> A detectação de aresta é um processo com o objetivo de encontrar mudanças bruscas no brilho ou na cor da imagem, matemáticamente falando, as suas descontinuidades, essas arestas podem significar mudanças de profundidade, iluminação, material. É frequentemente utilizada como pré-processamento para a seleção de características em imagens a serem utilizadas em processos de machine learn pois simplifica o conteúdo do imagem, capturando apenas o essencial, os "objetos" presentes nela.</p>
+	<img src = "arara-azul.jpg" id = "arara"></img> <img src = "arara-azul-edge.jpg" id = "arara"></img>
+	<p>Os critérios para um algoritmo adequado para a detecção de arestas são:</p>
+	<ul>
+		<li>Detecção de arestas com uma baixa taxa de erro, ou seja, o algoritmo deve encontrar o máximo de arestas presentes na imagem.</li>
+		<li>A aresta detectada deve se encontrar exatamente no meio da aresta real (arestas em imagens podem possuir expessura).</li>
+		<li>Uma aresta só deve ser detectada uma única vez, e ruídos não devem ser considerados arestas.</li>
+	</ul>
+	<p>Existem dois grupos de algoritmos de detectação de arestas: 'search based' e 'zero-crossing based'. [colocar aqui explicação]</p>
 	
-
-	<h3>Leitura e escrita de imagens com Canvas</h3>
-
+	<h2>Algoritmo Canny</h2>
+	<p>Considerado um dos melhores algoritmos para detectação de aresta atualmente existentes, foi criado pelo cientista da computação John Canny em 1986. O algoritmo funciona em etapas, que são as seguintes: </p>
+	<ol>
+		<li>Transformação da imagem para a escala de cinza.</li>
+		<li>Aplicação de um filtro de desfoque para diminuir o ruído presente, geralmente utilizado o filtro Gaussiano.</li>
+		<li>Cálculo do gradiente horizontal e vertical utilizando o kernel de Sobel.</li>
+		<li>Supressão de não-máximos para obter a presença da maior variação dentro da aresta.</li>
+		<li>Limpeza de arestas considerando um limite minímo e máximo de intensidade.</li>
+	</ol>
+	<p>A seguir iremos tratar indidualmente cada um desses processos.</p>
+	<h3>Escala de cinza</h3>
+	<p>Apesar de existirem adaptações do algoritmo que considera os 3 canais de cores, trabalhar com um único canal (todos os canais possuem valores idênticos) torna o processamento mais rápido e também é suficiente para a aplicação do algoritmo, pois considerar as arestas com base no tom de cinza retorna um resultado adequado.</p>
+	<p>Para tornar a imagem em preto e branco iremos simplesmente caminhar por cada pixel e calcular a média entre os 3 canais (RGB) e substituir este valor nos canais.</p>
+	<button type="button" id = "bt-grayscale">Grayscale</button>
+	<button type="button" id = "btr-grayscale">Retornar</button>
 	<figure>
-		<canvas id="imagemOriginal" width="900" height="600"></canvas>
-		<canvas id="imagemOutput" width="900" height="600"></canvas>
-		<figcaption>
-			Imagem da esquerda: Original. Imagem da direita: Imagem processada.
-		</figcaption>
+		<canvas id="ariranha-original" width="360" height = "490"></canvas>
+		<canvas id="ariranha-preto-branco" width="360" height="490"></canvas>
 	</figure>
-
-
-<script>
-	var canvasOriginal = document.getElementById("imagemOriginal");
-	var ctxOriginal = canvasOriginal.getContext("2d");
-	
-	var canvasOut = document.getElementById("imagemOutput");
-	var ctxOutput = canvasOut.getContext("2d");
-	
-	var imgOriginal = new Image();
-	var imgDataOut = new Image();
-
-//It seems that firefox does not allow you to use getImageData(...) unless the source of the canvas is from the same domain, 
-//and it does not consider files on your hard drive as being from the same domain as an html document also on your hard drive.	
-//https://developpaper.com/explain-how-to-solve-the-cross-domain-problem-of-canvas-image-getimagedata-todataurl/
-	imgOriginal.crossOrigin = '';
-	imgDataOut.crossOrigin = '';
-	
-    imgOriginal.src = 'https://i.imgur.com/dfZONkf.jpg';
-    imgOriginal.onload = function(){
-		ctxOriginal.drawImage(imgOriginal, 0, 0);
-		ctxOutput.drawImage(imgOriginal, 0, 0);
-		//ctxOutput.drawImage(imgOriginal, 50, 50);
-		//ctxOutput.drawImage(imgOriginal, 100, 100);
-		
-		imgDataOut = ctxOriginal.getImageData(0, 0, 1000	, 600);
-		var dataCopy = new Uint8ClampedArray(imgDataOut.data);
-		var height = imgDataOut.height;
-		var width = imgDataOut.width;
-		
-		// invert colors
-		//for (let i = 0; i < imgDataOut.data.length; i += 4) {
-			//imgDataOut.data[i] = 255 - imgDataOut.data[i];
-			//imgDataOut.data[i+1] = 255 - imgDataOut.data[i+1];
-			//imgDataOut.data[i+2] = 255 - imgDataOut.data[i+2];
-			//imgDataOut.data[i+3] = 255;
-		//}
-		
-		function array_to_img(array, imgData){
-			for(let i = 0; i<imgData.length; i +=4){
-				imgData[i] = array_img[Math.floor(i/(width*4))][Math.floor(i/(height*4))];
-				imgData[i +1] = imgData[i];
-				imgData[i +2] = imgData[i];
-				imgData[i +3] = 255;
-			}
-			return imgData
-		}
-		
-		function black_n_white(imgData){
-			//creating empty array
-			array_img = new Array(height);
-			console.log(array_img.length);
-			for (let i = 0; i < array_img.length; i++){
-				array_img[i] = new Array(width);
-			}
-			//use the mean of the 3 chanels
-			console.log(width);
-			for (let i = 0; i < imgData.length; i += 4){
-				array_img[Math.floor(i/(width *4))][Math.floor(i/(height *4))] = (imgData[i] + imgData[i+1] + imgData[i+2])/3	
-			}
-			return array_img;
-		}
-	
-		
-		function gaussian_filter(imgData){
-			save = new Uint8ClampedArray(imgData);
-			for (let i = 0; i < 4*width*height; i += 4){
-							
-				imgData[i] = (41* save[i]
-				+ 1*(save[i + (-8) + (-4*width*2)] || save[i])
-				+ 4*(save[i + (-4) + (-4*width*2)] || save[i])
-				+ 7*(save[i + (0) + (-4*width*2)] || save[i])
-				+ 4*(save[i + (4) + (-4*width*2)] || save[i])
-				+ 1*(save[i + (8) + (-4*width*2)] || save[i])
-				+ 4*(save[i + (-8) + (-4*width)] || save[i])
-				+ 16*(save[i + (-4) + (-4*width)] || save[i])
-				+ 26*(save[i + (0) + (-4*width)] || save[i])
-				+ 16*(save[i + (4) + (-4*width)] || save[i])
-				+ 4*(save[i + (8) + (-4*width)] || save[i])
-				+ 7*(save[i + (-8)] || save[i])
-				+ 26*(save[i + (-4)] || save[i])
-				+ 26*(save[i + (4)] || save[i])
-				+ 7*(save[i + (8)] || save[i])
-				+ 1*(save[i + (-8) + (4*width*2)] || save[i])
-				+ 4*(save[i + (-4) + (4*width*2)] || save[i])
-				+ 7*(save[i + (0) + (4*width*2)] || save[i])
-				+ 4*(save[i + (4) + (4*width*2)] || save[i])
-				+ 1*(save[i + (8) + (4*width*2)] || save[i])
-				+ 4*(save[i + (-8) + (4*width)] || save[i])
-				+ 16*(save[i + (-4) + (4*width)] || save[i])
-				+ 26*(save[i + (0) + (4*width)] || save[i])
-				+ 16*(save[i + (4) + (4*width)] || save[i])
-				+ 4*(save[i + (8) + (4*width)] || save[i])
-				)/273;
-								
-				imgData[i+1] = imgData[i];
-				imgData[i+2] = imgData[i];
-			}
-			return imgData;
-		}
-		
-		function arrayMax(arr) {
-			var len = arr.length, max = -Infinity;
-			while (len--) {
-				if (arr[len] > max) {
-					max = arr[len];
-				}
-			}
-		return max;
-		};
-
-
-		function sobel_detector(imgData){
-			//gx = new Uint8ClampedArray(imgData);
-			new_data = [];
-			for (let i = 0; i < 4*width*height; i += 4){
-			
-				gx = 
-				- (imgData[i - 4 - 4*width] || 0)
-				+ (imgData[i + 4 - 4*width] || 0)
-				-2 * (imgData[i -4] || 0)
-				+2 * (imgData[i +4] || 0)
-				- (imgData[i -4 + 4*width] || 0)
-				+ (imgData[i + 4 + 4*width] || 0);
-				
-				gy = 
-				(imgData[i - 4 - 4*width] || 0)
-				+ 2* (imgData[i - 4*width] || 0)
-				+ (imgData[i + 4 - 4*width] || 0)
-				- (imgData[i - 4 + 4*width] || 0)
-				- 2* (imgData[i + 4 *width] || 0)
-				- (imgData[i + 4 + 4*width] || 0);
-				
-				new_data.push(Math.sqrt((gx*gx) + (gy*gy)));
-			}
-			
-			
-			max_imgData = arrayMax(new_data);
-			console.log(max_imgData);
-			for (let i = 0; i < 4*width*height; i += 4){
-				imgData[i] = Math.round(imgData[i] * 255 / max_imgData);
-				imgData[i+1] = imgData[i];
-				imgData[i+2] = imgData[i];
-			}	
-			return imgData;
-		}
-		
-		imgDataOut.data.set(array_to_img(black_n_white(dataCopy), imgDataOut.data));
-		
-		//recuperar a imagem orignal
-		//imgDataOut.data.set(dataCopy);
-		ctxOutput.putImageData(imgDataOut, 0, 0);		
-};	    
-</script>
-
-
+	<h3>Desfoque Gaussiano</h3>
+	<p>O próximo passo é a utilização de algum efeito de desfoque para tratar o ruído presente na imagem, pois o erro do ruído será distribuído entre os pixels ao redor, não possuindo assim um grande gradiente. Neste algoritmo iremos utilizar o filtro Gaussiano, cada pixel da imagem se tornará a média ponderada dos pixels ao seu redor, só que os pesos seguiram uma distribuição gaussiana. Note que a na distribuição gaussian, todo pixel da imagem teria um peso diferente de zero, no entanto, podemos considerar apenas os pesos até 2 desvio padrões, pois os demais se aproximarão muito de 0.</p>
+	<p>Iremos utilizar a média igual a 0 e a variância é um parâmetro ajustável do algoritmo, podemos encontrar resultados finais melhores variando a variância da distribuição, nessa situação iremos utilizar o valor 1. Além disso, note que os nossos pixels formam uma matriz discreta, devemos portanto também discretizar nossa distribuição. </p>
+	<button type = "button" id = "bt-gaussian">Gaussian</button>
+	<button type = "button" id = "btr-gaussian">Retornar</button>
+	<figure>
+		<canvas id = "ariranha-preto-branco2" width="360" height="490"></canvas>
+		<canvas id = "ariranha-gaussian" width="360" height="490"></canvas>
+	</figure>
+	</div>
+	</div>
+	<script src = "script.js"></script>
 </body>
 </html>

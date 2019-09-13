@@ -1,0 +1,83 @@
+body{
+	background-color: #1A1A1D;
+}
+
+p{
+	color: white;
+	font-family: "Arial";
+}
+
+li{
+	color: white;
+	font-family: "Arial";
+}
+
+h1, h2, h3, h4{
+	font-family:"Arial";
+	color: #C3073F;
+}
+#arara{
+	margin-left: 5px;
+	width: 360px;
+	border-style: dashed;
+	border-color: #C3073F;
+}
+#titulo{
+	padding: 20px 10px 10px 60px;	
+	font-family: "Arial";
+	color: #C3073F;
+}
+#autor{
+	font-family: "Arial";
+	color: #C3073F;
+	position: relative;
+	top: -20px;
+	left: 400px;
+}
+#fundo {
+	background-color: #1A1A1D;
+	border-style: solid;
+	border-color: #C3073F;
+	width: 800px;
+	position: absolute;
+	left: 150px;
+}
+
+#topo {
+	background-color: #1A1A1D;
+	width: 800px;
+	height: 140px;
+	position: relative;
+	top: 10px;
+}
+
+#barra_topo{
+	background-color: #4E4E50;
+	width: 800px;
+	height: 25px;
+}
+
+#corpo {
+	text-align: justify;
+	background-color: #1A1A1D;
+	width: 750px;
+	margin: 5px 20px 5px 20px;	
+	position: relative;
+	top: -10px;
+}
+
+#ariranha-original, #ariranha-preto-branco2{
+	border-style: dashed;
+	border-color: #C3073F;
+	position:relative;
+	left: -40px;
+}
+
+#ariranha-preto-branco, #ariranha-gaussian{
+	border-style: dashed;
+	border-color: #C3073F;
+	position: relative;
+	left: 350px;
+	top: -500px;
+	margin-bottom: -480px;
+}
