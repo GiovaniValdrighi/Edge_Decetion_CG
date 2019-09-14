@@ -66,18 +66,37 @@ h1, h2, h3, h4{
 	top: -10px;
 }
 
-#ariranha-original, #ariranha-preto-branco2{
+#ariranha-original, #ariranha-preto-branco2, #ariranha-gaussian2, #ariranha-sobel2, #ariranha-supre2{
 	border-style: dashed;
 	border-color: #C3073F;
 	position:relative;
 	left: -40px;
 }
 
-#ariranha-preto-branco, #ariranha-gaussian{
+#ariranha-preto-branco, #ariranha-gaussian, #ariranha-sobel, #ariranha-supre, #ariranha-threshold{
 	border-style: dashed;
 	border-color: #C3073F;
 	position: relative;
 	left: 350px;
 	top: -500px;
 	margin-bottom: -480px;
+}
+
+#func-gaussian{
+	position: relative;
+	left: 300px;
+}
+#matriz-gaussian{
+	position: relative;
+	left: 200px;
+}
+
+#sobel-x{
+	position: relative;
+	left: 200px;
+}
+
+#sobel-y{
+	position:relative;
+	left:200px;
 }

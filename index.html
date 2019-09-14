@@ -28,7 +28,6 @@
 		<li>A aresta detectada deve se encontrar exatamente no meio da aresta real (arestas em imagens podem possuir expessura).</li>
 		<li>Uma aresta só deve ser detectada uma única vez, e ruídos não devem ser considerados arestas.</li>
 	</ul>
-	<p>Existem dois grupos de algoritmos de detectação de arestas: 'search based' e 'zero-crossing based'. [colocar aqui explicação]</p>
 	
 	<h2>Algoritmo Canny</h2>
 	<p>Considerado um dos melhores algoritmos para detectação de aresta atualmente existentes, foi criado pelo cientista da computação John Canny em 1986. O algoritmo funciona em etapas, que são as seguintes: </p>
@@ -50,13 +49,47 @@
 		<canvas id="ariranha-preto-branco" width="360" height="490"></canvas>
 	</figure>
 	<h3>Desfoque Gaussiano</h3>
-	<p>O próximo passo é a utilização de algum efeito de desfoque para tratar o ruído presente na imagem, pois o erro do ruído será distribuído entre os pixels ao redor, não possuindo assim um grande gradiente. Neste algoritmo iremos utilizar o filtro Gaussiano, cada pixel da imagem se tornará a média ponderada dos pixels ao seu redor, só que os pesos seguiram uma distribuição gaussiana. Note que a na distribuição gaussian, todo pixel da imagem teria um peso diferente de zero, no entanto, podemos considerar apenas os pesos até 2 desvio padrões, pois os demais se aproximarão muito de 0.</p>
+	<p>O próximo passo é a utilização de algum efeito de desfoque para tratar o ruído presente na imagem, pois o erro do ruído será distribuído entre os pixels ao redor, não possuindo assim um grande gradiente. Neste algoritmo iremos utilizar o filtro Gaussiano, cada pixel da imagem se tornará a média ponderada dos pixels ao seu redor, só que os pesos seguiram uma distribuição gaussiana. Note que a na distribuição gaussiana, todo pixel da imagem teria um peso diferente de zero, no entanto, podemos considerar apenas os pesos até 2 desvio padrões, pois os demais se aproximarão muito de 0.</p>
 	<p>Iremos utilizar a média igual a 0 e a variância é um parâmetro ajustável do algoritmo, podemos encontrar resultados finais melhores variando a variância da distribuição, nessa situação iremos utilizar o valor 1. Além disso, note que os nossos pixels formam uma matriz discreta, devemos portanto também discretizar nossa distribuição. </p>
+	<p id = "func-gaussian"> \( G(x,y) = \dfrac {exp(-\frac {x^2+y^2}{2 \sigma^2})} {2\pi \sigma^2} \)</p>
+	<p>Para discretizar o valor de cada pixel integramos a função de distribuição ao longo do pixel e utilizamos este valor, note que os valores da integral não são inteiros, então arredondamos de tal forma que os menores valores serão 1, a matriz a seguir apresenta quais serão os coeficientes utilizados. </p>
+	<img src = "matriz-gaussiana.jpg" id = "matriz-gaussian"></img> </br>
 	<button type = "button" id = "bt-gaussian">Gaussian</button>
 	<button type = "button" id = "btr-gaussian">Retornar</button>
 	<figure>
 		<canvas id = "ariranha-preto-branco2" width="360" height="490"></canvas>
 		<canvas id = "ariranha-gaussian" width="360" height="490"></canvas>
+	</figure>
+	<h3>Gradiente</h3>
+	<p>Agora que já possuimos a imagem em canal único e desfocada, o próximo passo é calcular a derivada de tom nos pixels. Note que novamente iremos utilizar algo que se aproxima a uma derivada, e não a definição real. Em nosso pixel \( (x,y) \) não conseguimos definir um \( h \to 0\) e calcular o valor das funções em \( f_x(x+h) \) e \( f_y(y+h) \), já que novamente estamos tratando com um espaço discreto. Para a aproximação, iremos utilizar o kernel de Sobel, que é uma matriz \( (3,3) \), e em cada pixel iremos calcular a diferença entre o pixel seguinte e o anterior. Observe as matrizes:</p>
+	<img src="sobel-x.jpg" id = "sobel-x"></img> <img src="sobel-y.jpg" id ="sobel-y"></img>
+	<p>Note que possuimos duas matrizes, isto ocorre pois devemos calcular a derivada nas duas dimensões e com esses dois valores em cada um dos pixels, substituimos o valor pela nova magnitude definida por \( M = \sqrt {G_x^2 + G_y^2}\). Note que também precisamos calcular a direção deste gradiente, por isto criamos uma nova matriz com a mesma dimensão da matriz de pixels e preenchemos com a função \( \Theta = arctan (\dfrac {G_y}{G_x})\).</p>
+	<button type = "button" id = "bt-sobel">Sobel</button>
+	<button type = "button" id = "btr-sobel">Retornar</button>
+	<figure>
+		<canvas id = "ariranha-gaussian2" width="360" height="490"></canvas>
+		<canvas id = "ariranha-sobel" width="360" height="490"></canvas>
+	</figure>
+	<p>Note que com este resultado, podemos visualizar já a detecção de algumas arestas, os próximos passos agora serão focados em encontrar o meio das arestas que possuem mais de 1 pixel de largura e a seguir limpar as arestas geradas por ruído (com intensidade muito baixa).</p>
+	<h3>Supressão de não-máximos</h3>
+	<p>Como o próprio nome já diz, nessa etapa iremos analisar as arestas obtidas e verificar quais dos pixels representam de fato um máximo local, e retirar da intesidade dos pixels que não são máximos locais. Para isso, utilizaremos a direção do gradiente calculada pelo algoritmo anterior e iremos comparar os pixels nessa direção, se o pixel \( (x,y)\) for o maior entre os pixels \( (x,y) + \Theta(x,y) \) e \( (x,y) - \Theta(x,y) \), ele será mantido, caso contrário, seu valor será alterado para 0.</p>
+	<p>Obs: Para rodar este algoritmo, é necessário que o algoritmo de Sobel tenha sido rodado anteriormente.</p>
+	<button type = "button" id = "bt-supre">Supressão</button>
+	<button type = "button" id = "btr-supre">Retornar</button>
+	<figure>
+		<canvas id = "ariranha-sobel2" width="360" height="490"></canvas>
+		<canvas id = "ariranha-supre" width="360" height="490"></canvas>
+	</figure>
+	<h3>Limite duplo</h3>
+	<p>Por fim, dado que já obtemos a arestas com 1 pixel de largura, iremos verificar qual faixa de intensidade de fato são arestas, mais uma vez, para cada pixel de nossa imagem, iremos verificar se está acima do limite inferior definido e se está abaixo do limite superior, caso esteja acima do limite superior, classificamos a aresta como uma aresta forte.</p>
+	<p>Valor inferior:<input type = "number" id = "low" placeholder = "60" value = "60">
+	Valor superior:<input type = "number" id = "high-threshold">
+	</p>
+	<button type = "button" id = "bt-threshold">Limite</button>
+	<button type = "button" id = "btr-threshold">Retornar</button>
+	<figure>
+		<canvas id = "ariranha-supre2" width="360" height="490"></canvas>
+		<canvas id = "ariranha-threshold" width="360" height="490"></canvas>
 	</figure>
 	</div>
 	</div>
