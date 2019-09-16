@@ -272,7 +272,6 @@ AriOri5.onload = function(){
 
 	//função de threshold
 	document.getElementById("bt-threshold").addEventListener("click", function threshold(){
-		console.log("hi");
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
 			inputLow = document.getElementById("low").value;
 			if (dataCopy[i] < inputLow){
@@ -293,5 +292,166 @@ AriOri5.onload = function(){
 		//retornando para 
 		imgDataOut.data.set(dataCopy);
 		ctxAriT.putImageData(imgDataOut, 0, 0);
+	});
+};
+
+//canvas do url
+var canvasURL1 = document.getElementById("canvas-url1");
+var ctxURLOri = canvasURL1.getContext("2d");
+
+var canvasURL2 = document.getElementById("canvas-url2");
+var ctxURLOut = canvasURL2.getContext("2d");
+
+var url_box = document.getElementById("url");
+var url = url_box.value;
+
+var URLOri = new Image();
+var URLOut = new Image();
+
+//protocolos chatos
+URLOri.crossOrigin = '';
+URLOut.crossOrigin = '';
+	
+URLOri.src = "https://www.petz.com.br/blog/wp-content/uploads/2019/06/tamanho-de-gato.jpg";
+function swap(){
+	URLOri.src = document.getElementById("url").value;
+}
+URLOri.onload = function(){
+	//exibindo imagens
+	canvasURL1.width = URLOri.width;
+	canvasURL1.height = URLOri.height;
+	canvasURL2.width = URLOri.width;
+	canvasURL2.height = URLOri.height;
+	ctxURLOri.drawImage(URLOri, 0, 0, URLOri.width, URLOri.height);
+	ctxURLOut.drawImage(URLOri, 0, 0, URLOri.width, URLOri.height);
+	
+
+	var imgDataOut = ctxURLOut.getImageData(0, 0, URLOri.width, URLOri.height);
+	var dataCopy = new Uint8ClampedArray(imgDataOut.data);
+	var height = imgDataOut.height;
+	var width = imgDataOut.width;
+
+	//todas as funções
+	document.getElementById("bt-url").addEventListener("click", function full_canny(){
+		//grayscale
+		//média dos 3 canais
+		for (let i = 0; i < imgDataOut.data.length; i += 4){
+			aux = (dataCopy[i] + dataCopy[i+1] + dataCopy[i+2])/3;
+			imgDataOut.data[i] = aux;
+		}
+		
+		new_dataCopy = new Uint8ClampedArray(imgDataOut.data);
+		
+		//gaussian
+		for (let i = 0; i < imgDataOut.data.length; i += 4){			
+			aux = (41* dataCopy[i]
+				+ 1*(new_dataCopy[i + (-8) + (-4*width*2)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (-4) + (-4*width*2)] || new_dataCopy[i])
+				+ 7*(new_dataCopy[i + (0) + (-4*width*2)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (4) + (-4*width*2)] || new_dataCopy[i])
+				+ 1*(new_dataCopy[i + (8) + (-4*width*2)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (-8) + (-4*width)] || new_dataCopy[i])
+				+ 16*(new_dataCopy[i + (-4) + (-4*width)] || new_dataCopy[i])
+				+ 26*(new_dataCopy[i + (0) + (-4*width)] || new_dataCopy[i])
+				+ 16*(new_dataCopy[i + (4) + (-4*width)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (8) + (-4*width)] || new_dataCopy[i])
+				+ 7*(new_dataCopy[i + (-8)] || new_dataCopy[i])
+				+ 26*(new_dataCopy[i + (-4)] || new_dataCopy[i])
+				+ 26*(new_dataCopy[i + (4)] || new_dataCopy[i])
+				+ 7*(new_dataCopy[i + (8)] || new_dataCopy[i])
+				+ 1*(new_dataCopy[i + (-8) + (4*width*2)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (-4) + (4*width*2)] || new_dataCopy[i])
+				+ 7*(new_dataCopy[i + (0) + (4*width*2)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (4) + (4*width*2)] || new_dataCopy[i])
+				+ 1*(new_dataCopy[i + (8) + (4*width*2)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (-8) + (4*width)] || new_dataCopy[i])
+				+ 16*(new_dataCopy[i + (-4) + (4*width)] || new_dataCopy[i])
+				+ 26*(new_dataCopy[i + (0) + (4*width)] || new_dataCopy[i])
+				+ 16*(new_dataCopy[i + (4) + (4*width)] || new_dataCopy[i])
+				+ 4*(new_dataCopy[i + (8) + (4*width)] || new_dataCopy[i])
+				)/273;
+			imgDataOut.data[i] = aux;				
+		}
+		
+		new_dataCopy = imgDataOut.data.slice();
+		orient = new Uint8ClampedArray(imgDataOut.data);
+		
+		//sobel
+		for (let i = 0; i < imgDataOut.data.length; i+= 4){
+			gx = (-1 * (new_dataCopy[i + (-4) + (-4*width)] || 0) 
+				-2 * (new_dataCopy[i + (-4)] || 0) 
+				-1 * (new_dataCopy[i + (-4) + (4*width)] || 0)
+				+1 * (new_dataCopy[i + (+4) + (-4*width)] || 0)
+				+2 * (new_dataCopy[i + (+4)] || 0)
+				+1 * (new_dataCopy[i + (+4) + (4*width)] || 0));
+			gy =  (-1 * (new_dataCopy[i + (-4) + (-4*width)] || 0) 
+				-2 * (new_dataCopy[i + (-4*width)] || 0) 
+				-1 * (new_dataCopy[i + (+4) + (-4*width)] || 0)
+				+1 * (new_dataCopy[i + (-4) + (+4*width)] || 0)
+				+2 * (new_dataCopy[i + (+4*width)] || 0)
+				+1 * (new_dataCopy[i + (+4) + (4*width)] || 0));
+			imgDataOut.data[i] = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));	
+			orient[i] = Math.atan2(gx, gy);
+		}
+	
+		
+		//calculando a direção do gradiente
+		for (let i = 0; i < imgDataOut.data.length; i+= 4){
+			if (orient[i] > -Math.PI/8 &&  orient[i] <= Math.PI/8){orient[i] = 1;}
+			else if (orient[i] > Math.PI/8 &&  orient[i] <= Math.PI*3/8){orient[i] = 2;}
+			else if (orient[i] > Math.PI*3/8 &&  orient[i] <= Math.PI*5/8){orient[i] = 3;}
+			else if (orient[i] > Math.PI*5/8 &&  orient[i] <= Math.PI*7/8){orient[i] = 4;}
+			else if (orient[i] > Math.PI*7/8 &&  orient[i] <= -Math.PI*7/8){orient[i] = 5;}
+			else if (orient[i] > -Math.PI*7/8 &&  orient[i] <= -Math.PI*5/8){orient[i] = 6;}
+			else if (orient[i] > -Math.PI*5/8 &&  orient[i] <= -Math.PI*3/8){orient[i] = 7;}
+			else if (orient[i] > -Math.PI*3/8 &&  orient[i] <= -Math.PI/8){orient[i] = 8;}
+		}
+		
+		new_dataCopy = imgDataOut.data.slice();
+		
+		//non-max supression
+		
+		for (let i = 0; i < imgDataOut.data.length; i+= 4){
+			aux = imgDataOut.data[i];
+			if(orient[i] == 1 || orient[i] == 7){
+				aux = (aux > new_dataCopy[i-4] && aux > new_dataCopy[i+4]) ? aux :0; 
+			}
+			else if(orient[i] == 2 || orient[i] == 6){
+				aux = (aux > new_dataCopy[i+4-4*width] && aux > new_dataCopy[i-4+4*width]) ? aux :0; 
+			}
+			else if(orient[i] == 3 || orient[i] == 5){
+				aux = (aux > new_dataCopy[i - 4*width] && aux > new_dataCopy[i +4*width]) ? aux :0; 
+			}
+			else if(orient[i] == 4 || orient[i] == 8){				
+				aux = (aux > new_dataCopy[i -4 -4*width] && aux > new_dataCopy[i +4 +4*width]) ? aux :0; 
+			}
+			imgDataOut.data[i] = aux;
+		}
+		
+		new_dataCopy = imgDataOut.data.slice();
+		//double threshold
+		
+		//função de threshold
+	
+		for (let i = 0; i < imgDataOut.data.length; i+= 4){
+			inputLow = document.getElementById("low").value;
+			if (new_dataCopy[i] < inputLow){
+				aux = 0;
+			}else{
+				aux = new_dataCopy[i];
+			}
+			imgDataOut.data[i] = aux;
+			imgDataOut.data[i+1] = aux;
+			imgDataOut.data[i+2] = aux;
+		}
+		
+		ctxURLOri.putImageData(imgDataOut, 0, 0);
+	});
+	
+	//função para recuperar
+	document.getElementById("btr-url").addEventListener("click", function recover(){
+		//retornando para 
+		imgDataOut.data.set(dataCopy);
+		ctxURLOri.putImageData(imgDataOut, 0, 0);
 	});
 };

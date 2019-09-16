@@ -100,3 +100,13 @@ h1, h2, h3, h4{
 	position:relative;
 	left:200px;
 }
+
+#canvas-url1, #canvas-url2{
+	border-style:dashed;
+	border-color:#C3073F;
+	position: sticky;
+}
+
+a{
+	color:#C3073F;
+}
