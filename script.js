@@ -312,7 +312,7 @@ var URLOut = new Image();
 URLOri.crossOrigin = '';
 URLOut.crossOrigin = '';
 	
-URLOri.src = "https://www.petz.com.br/blog/wp-content/uploads/2019/06/tamanho-de-gato.jpg";
+URLOri.src = "https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/gamba.jpg";
 function swap(){
 	URLOri.src = document.getElementById("url").value;
 }
