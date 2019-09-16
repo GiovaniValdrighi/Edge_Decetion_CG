@@ -434,7 +434,7 @@ URLOri.onload = function(){
 		//função de threshold
 	
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
-			inputLow = document.getElementById("low").value;
+			inputLow = document.getElementById("low-url").value;
 			if (new_dataCopy[i] < inputLow){
 				aux = 0;
 			}else{
