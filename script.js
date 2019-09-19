@@ -72,6 +72,7 @@ AriOri2.onload = function(){
 	
 	//função de gaussian	
 	document.getElementById("bt-gaussian").addEventListener("click", function gaussian(){
+		//média ponderada com os pesos gaussianos
 		for (let i = 0; i < imgDataOut.data.length; i += 4){			
 				aux = (41* dataCopy[i]
 				+ 1*(dataCopy[i + (-8) + (-4*width*2)] || dataCopy[i])
@@ -143,27 +144,33 @@ AriOri3.onload = function(){
 	//função de sobel	
 	document.getElementById("bt-sobel").addEventListener("click", function sobel(){
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
+			//calculo do gradiente no eixo x
 			gx = (-1 * (dataCopy[i + (-4) + (-4*width)] || 0) 
 				-2 * (dataCopy[i + (-4)] || 0) 
 				-1 * (dataCopy[i + (-4) + (4*width)] || 0)
 				+1 * (dataCopy[i + (+4) + (-4*width)] || 0)
 				+2 * (dataCopy[i + (+4)] || 0)
 				+1 * (dataCopy[i + (+4) + (4*width)] || 0));
+			//calculo do gradiente no eixo y
 			gy =  (-1 * (dataCopy[i + (-4) + (-4*width)] || 0) 
 				-2 * (dataCopy[i + (-4*width)] || 0) 
 				-1 * (dataCopy[i + (+4) + (-4*width)] || 0)
 				+1 * (dataCopy[i + (-4) + (+4*width)] || 0)
 				+2 * (dataCopy[i + (+4*width)] || 0)
 				+1 * (dataCopy[i + (+4) + (4*width)] || 0));
+				
+			//passando a magnitude
 			imgDataOut.data[i] = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));				
 			imgDataOut.data[i+1] = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));
 			imgDataOut.data[i+2] = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));
+			//passando a orientação
 			orient[i] = Math.atan2(gx, gy);
 		}
 		
 		ctxAriS.putImageData(imgDataOut, 0, 0);
 		
 		//calculando a direção do gradiente
+		//círculo trigonométrico dividido em 8 partes
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
 			if (orient[i] > -Math.PI/8 &&  orient[i] <= Math.PI/8){orient[i] = 1;}
 			else if (orient[i] > Math.PI/8 &&  orient[i] <= Math.PI*3/8){orient[i] = 2;}
@@ -213,6 +220,7 @@ AriOri4.onload = function(){
 	document.getElementById("bt-supre").addEventListener("click", function supression(){
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
 			aux = imgDataOut.data[i];
+			//comparando o ponto com os outros 2 na direção do gradiente
 			if(orient[i] == 1 || orient[i] == 7){
 				aux = (aux > dataCopy[i-4] && aux > dataCopy[i+4]) ? aux :0; 
 			}
@@ -248,9 +256,6 @@ var ctxAriOri5 = canvasAriranha5.getContext("2d");
 var canvasAriranhaT = document.getElementById("ariranha-threshold");
 var ctxAriT = canvasAriranhaT.getContext("2d");
 
-var inputHigh = document.getElementById("high-threshold");
-var high = inputHigh.valor;
-
 var AriOri5 = new Image();
 var AriT = new Image();
 
@@ -272,18 +277,95 @@ AriOri5.onload = function(){
 
 	//função de threshold
 	document.getElementById("bt-threshold").addEventListener("click", function threshold(){
+		//listas de indices dos pontos fracos e fortes
+		pts_fracos = new Array();
+		pts_fortes = new Array();
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
-			inputLow = document.getElementById("low").value;
-			if (dataCopy[i] < inputLow){
-				aux = 0;
-			}else{
+			inputLow = 2.55*document.getElementById("low").value;
+			inputHigh = 2.55*document.getElementById("high").value;
+			
+			//ponto forte
+			if (dataCopy[i] > inputHigh){
+				aux = 255;
+				pts_fortes.push(i);
+			//ponto fraco
+			}else if (dataCopy[i] < inputHigh && dataCopy[i] > inputLow){
 				aux = dataCopy[i];
+				pts_fracos.push(i);
+			//ponto ignorado
+			}else{
+				aux = 0;
 			}
 			imgDataOut.data[i] = aux;
 			imgDataOut.data[i+1] = aux;
 			imgDataOut.data[i+2] = aux;
 		}
 		
+		//função recursiva que verifica se existe algum ponto fraco
+		//ao redor de um ponto forte, se tiver, classifica ele em forte
+		//e chama recursivamente
+		function hysteresis(ind, recursao){
+			//limite de profundidade da recursão
+			if(recursao>200){return;}
+			else{recursao++}
+			if(imgDataOut.data[ind - 4 - 4*width] != 0){
+				imgDataOut.data[ind - 4 - 4*width] = 255;
+				imgDataOut.data[ind - 4 - 4*width +1] = 255;
+				imgDataOut.data[ind - 4 - 4*width +2] = 255;
+				hysteresis(ind - 4 - 4*width, recursao);
+			}else if(imgDataOut.data[ind - 4*width] != 0){
+				imgDataOut.data[ind - 4*width] = 255;
+				imgDataOut.data[ind - 4*width +1] = 255;
+				imgDataOut.data[ind - 4*width + 2] = 255;
+				hysteresis(ind - 4*width, recursao);
+			}else if(imgDataOut.data[ind + 4 - 4*width] != 0){
+				imgDataOut.data[ind + 4 - 4*width] = 255;
+				imgDataOut.data[ind + 4 - 4*width +1] = 255;
+				imgDataOut.data[ind + 4 - 4*width + 2] = 255;
+				hysteresis(ind + 4 - 4*width, recursao);
+			}else if(imgDataOut.data[ind - 4] != 0){
+				imgDataOut.data[ind - 4] = 255;
+				imgDataOut.data[ind - 4 +1] = 255;
+				imgDataOut.data[ind - 4 +2] = 255;
+				hysteresis(ind - 4, recursao);
+			}else if(imgDataOut.data[ind + 4] != 0){
+				imgDataOut.data[ind + 4] = 255;
+				imgDataOut.data[ind + 4 + 1] = 255;
+				imgDataOut.data[ind + 4 + 2] = 255;
+				hysteresis(ind + 4, recursao);
+			}else if(imgDataOut.data[ind - 4 + 4*width] != 0){
+				imgDataOut.data[ind - 4 + 4*width] = 255;
+				imgDataOut.data[ind - 4 + 4*width +1] = 255;
+				imgDataOut.data[ind - 4 + 4*width +2] = 255;
+				hysteresis(ind - 4 + 4*width, recursao);
+			}else if(imgDataOut.data[ind + 4*width] != 0){
+				imgDataOut.data[ind + 4*width] = 255;
+				imgDataOut.data[ind + 4*width +1] = 255;
+				imgDataOut.data[ind + 4*width +2] = 255;
+				hysteresis(ind + 4*width, recursao);
+			}else if(imgDataOut.data[ind + 4 + 4*width] != 0){
+				imgDataOut.data[ind + 4 + 4*width] = 255;
+				imgDataOut.data[ind + 4 + 4*width +1] = 255;
+				imgDataOut.data[ind + 4 + 4*width +2] = 255;
+				hysteresis(ind + 4 + 4*width, recursao);
+			}
+		}
+		
+		//inicialização da recursão
+		recursao = 0;
+		//caminho para todos os pontos fortes
+		for (let i = 0; i < pts_fortes.length; i++){
+			hysteresis(pts_fortes[i], recursao);
+		}
+		
+		//depois, todos os pontos fracos que sobraram recebem o valor 0
+		for (let i = 0; i< pts_fracos.length; i++){
+			if(imgDataOut.data[pts_fracos[i]] != 255){
+				imgDataOut.data[pts_fracos[i]] = 0;
+				imgDataOut.data[pts_fracos[i] +1] = 0;
+				imgDataOut.data[pts_fracos[i] +2] = 0;
+			}
+		}
 		ctxAriT.putImageData(imgDataOut, 0, 0);
 	});
 	
@@ -343,7 +425,8 @@ URLOri.onload = function(){
 		new_dataCopy = new Uint8ClampedArray(imgDataOut.data);
 		
 		//gaussian
-		for (let i = 0; i < imgDataOut.data.length; i += 4){			
+		for (let i = 0; i < imgDataOut.data.length; i += 4){
+			//média ponderada utilizando os pesos de uma dist. gaussiana
 			aux = (41* dataCopy[i]
 				+ 1*(new_dataCopy[i + (-8) + (-4*width*2)] || new_dataCopy[i])
 				+ 4*(new_dataCopy[i + (-4) + (-4*width*2)] || new_dataCopy[i])
@@ -378,24 +461,29 @@ URLOri.onload = function(){
 		
 		//sobel
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
+			//calculando a derivada no eixo x
 			gx = (-1 * (new_dataCopy[i + (-4) + (-4*width)] || 0) 
 				-2 * (new_dataCopy[i + (-4)] || 0) 
 				-1 * (new_dataCopy[i + (-4) + (4*width)] || 0)
 				+1 * (new_dataCopy[i + (+4) + (-4*width)] || 0)
 				+2 * (new_dataCopy[i + (+4)] || 0)
 				+1 * (new_dataCopy[i + (+4) + (4*width)] || 0));
+			//calculando a derivada no eixo y
 			gy =  (-1 * (new_dataCopy[i + (-4) + (-4*width)] || 0) 
 				-2 * (new_dataCopy[i + (-4*width)] || 0) 
 				-1 * (new_dataCopy[i + (+4) + (-4*width)] || 0)
 				+1 * (new_dataCopy[i + (-4) + (+4*width)] || 0)
 				+2 * (new_dataCopy[i + (+4*width)] || 0)
 				+1 * (new_dataCopy[i + (+4) + (4*width)] || 0));
-			imgDataOut.data[i] = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));	
+			//passando a magnitude
+			imgDataOut.data[i] = Math.sqrt(Math.pow(gx, 2) + Math.pow(gy, 2));
+			//passando a orientação
 			orient[i] = Math.atan2(gx, gy);
 		}
 	
 		
 		//calculando a direção do gradiente
+		//o circulo trigonométrico foi dividido em 8 partes
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
 			if (orient[i] > -Math.PI/8 &&  orient[i] <= Math.PI/8){orient[i] = 1;}
 			else if (orient[i] > Math.PI/8 &&  orient[i] <= Math.PI*3/8){orient[i] = 2;}
@@ -410,7 +498,7 @@ URLOri.onload = function(){
 		new_dataCopy = imgDataOut.data.slice();
 		
 		//non-max supression
-		
+		//verifico se o ponto é maior do que os dois pontos da direção do gradiente dele
 		for (let i = 0; i < imgDataOut.data.length; i+= 4){
 			aux = imgDataOut.data[i];
 			if(orient[i] == 1 || orient[i] == 7){
@@ -429,20 +517,94 @@ URLOri.onload = function(){
 		}
 		
 		new_dataCopy = imgDataOut.data.slice();
-		//double threshold
 		
 		//função de threshold
-	
-		for (let i = 0; i < imgDataOut.data.length; i+= 4){
-			inputLow = document.getElementById("low-url").value;
-			if (new_dataCopy[i] < inputLow){
-				aux = 0;
-			}else{
+		//vetores de indices de pontos fortes e fracos
+		pts_fracos = new Array();
+		pts_fortes = new Array();
+		inputLow = 2.55*document.getElementById("low-url").value;
+		inputHigh = 2.55*document.getElementById("high-url").value;	
+		for (let i = 0; i < imgDataOut.data.length; i+= 4){	
+			//ponto forte
+			if (new_dataCopy[i] > inputHigh){
+				aux = 255;
+				pts_fortes.push(i);
+			//ponto fraco
+			}else if (new_dataCopy[i] < inputHigh && new_dataCopy[i] > inputLow){
 				aux = new_dataCopy[i];
+				pts_fracos.push(i);
+			//ponto ignorado
+			}else{
+				aux = 0;
 			}
 			imgDataOut.data[i] = aux;
 			imgDataOut.data[i+1] = aux;
 			imgDataOut.data[i+2] = aux;
+		}
+		
+		
+		//funçao recursiva que em cada ponto forte, verifico se existe um ponto fraco ao redor dele
+		//se existir, ele passa a ser classificado como forte e é chamado recursivamente
+		function hysteresis(ind, recursao){
+			//profundidade máxima de recursão
+			if(recursao>1000){return;}
+			else{recursao++}
+			if(imgDataOut.data[ind - 4 - 4*width] != 0 && imgDataOut.data[ind - 4 - 4*width] != 255){
+				imgDataOut.data[ind - 4 - 4*width] = 255;
+				imgDataOut.data[ind - 4 - 4*width +1] = 255;
+				imgDataOut.data[ind - 4 - 4*width +2] = 255;
+				hysteresis(ind - 4 - 4*width, recursao);
+			}else if(imgDataOut.data[ind - 4*width] != 0 && imgDataOut.data[ind - 4*width] != 255){
+				imgDataOut.data[ind - 4*width] = 255;
+				imgDataOut.data[ind - 4*width +1] = 255;
+				imgDataOut.data[ind - 4*width + 2] = 255;
+				hysteresis(ind - 4*width, recursao);
+			}else if(imgDataOut.data[ind + 4 - 4*width] != 0 && imgDataOut.data[ind + 4 - 4*width] != 255){
+				imgDataOut.data[ind + 4 - 4*width] = 255;
+				imgDataOut.data[ind + 4 - 4*width +1] = 255;
+				imgDataOut.data[ind + 4 - 4*width + 2] = 255;
+				hysteresis(ind + 4 - 4*width, recursao);
+			}else if(imgDataOut.data[ind - 4] != 0 && imgDataOut.data[ind - 4] != 0){
+				imgDataOut.data[ind - 4] = 255;
+				imgDataOut.data[ind - 4 +1] = 255;
+				imgDataOut.data[ind - 4 +2] = 255;
+				hysteresis(ind - 4, recursao);
+			}else if(imgDataOut.data[ind + 4] != 0 && imgDataOut.data[ind + 4] != 255){
+				imgDataOut.data[ind + 4] = 255;
+				imgDataOut.data[ind + 4 + 1] = 255;
+				imgDataOut.data[ind + 4 + 2] = 255;
+				hysteresis(ind + 4, recursao);
+			}else if(imgDataOut.data[ind - 4 + 4*width] != 0 && imgDataOut.data[ind - 4 + 4*width] != 255){
+				imgDataOut.data[ind - 4 + 4*width] = 255;
+				imgDataOut.data[ind - 4 + 4*width +1] = 255;
+				imgDataOut.data[ind - 4 + 4*width +2] = 255;
+				hysteresis(ind - 4 + 4*width, recursao);
+			}else if(imgDataOut.data[ind + 4*width] != 0 && imgDataOut.data[ind + 4*width] != 255){
+				imgDataOut.data[ind + 4*width] = 255;
+				imgDataOut.data[ind + 4*width +1] = 255;
+				imgDataOut.data[ind + 4*width +2] = 255;
+				hysteresis(ind + 4*width, recursao);
+			}else if(imgDataOut.data[ind + 4 + 4*width] != 0 && imgDataOut.data[ind + 4 + 4*width] != 255){
+				imgDataOut.data[ind + 4 + 4*width] = 255;
+				imgDataOut.data[ind + 4 + 4*width +1] = 255;
+				imgDataOut.data[ind + 4 + 4*width +2] = 255;
+				hysteresis(ind + 4 + 4*width, recursao);
+			}
+		}
+		
+		//inicialização da recursão
+		recursao = 0;
+		//caminho para cada ponto forte
+		for (let i = 0; i < pts_fortes.length; i++){
+			hysteresis(pts_fortes[i], recursao);
+		}
+		
+		for (let i = 0; i< pts_fracos.length; i++){
+			if(imgDataOut.data[pts_fracos[i]] != 255){
+				imgDataOut.data[pts_fracos[i]] = 0;
+				imgDataOut.data[pts_fracos[i] +1] = 0;
+				imgDataOut.data[pts_fracos[i] +2] = 0;
+			}
 		}
 		
 		ctxURLOri.putImageData(imgDataOut, 0, 0);

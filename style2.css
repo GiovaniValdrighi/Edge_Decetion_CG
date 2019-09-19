@@ -1,0 +1,85 @@
+body{
+	background-color: #1A1A1D;
+}
+
+#fundo {
+	background-color: #1A1A1D;
+	border-style: solid;
+	border-color: #C3073F;
+	width: 800px;
+	position: absolute;
+	left: 250px;
+}
+
+
+#topo {
+	background-color: #1A1A1D;
+	width: 800px;
+	height: 140px;
+	position: relative;
+	top: 10px;
+}
+
+#barra_topo{
+	border-style: solid;
+	border-color: #4E4E50;
+	width: 795px;
+	height: 35px;
+	position: relative;
+	top: 5px;
+}	
+
+a{
+	font-family: Arial;
+	color:#C3073F;
+}
+
+#texto-topo{
+	font-size: 20px;
+	padding: 7px 10px 5px 20px;
+	font-weight: bold;
+}
+
+#corpo {
+	text-align: justify;
+	background-color: #1A1A1D;
+	width: 750px;
+	margin: 5px 20px 5px 20px;	
+	position: relative;
+	top: -10px;
+}
+
+h1, h2, h3, h4{
+	font-family:"Arial";
+	color: #C3073F;
+}
+#titulo{
+	padding: 20px 10px 10px 60px;	
+	font-family: "Arial";
+	color: #C3073F;
+}
+
+img{
+	border-style: dashed;
+	border-color: #C3073F;
+}
+
+#menina1, #menina2{
+	position:relative;
+	left: 80px;
+}
+
+#carro1, #carro2{
+	position:relative;
+	left: 70px;
+}
+
+#maquina1, #maquina2{
+	position:relative;
+	left: 100px;
+}
+
+#construcao1, #construcao2{
+	position:relative;
+	left: 60px;
+}

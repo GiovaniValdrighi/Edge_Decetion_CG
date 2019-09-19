@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title> Projeto A1 </title>
+	<title> Detecção de arestas </title>
 	<!comment: MathJax para equações matemáticas em TeX>
 	
 	<link rel="stylesheet" type="text/css" href="style.css">
@@ -17,7 +17,11 @@
 	<h3 id = "autor">Giovani de Almeida Valdrighi<h3>
 
 	</div>
-	<div id = "barra_topo"></div>
+	<div id = "barra_topo"> 
+	<div id = "texto-topo">
+	<a href = "index.html">HOME</a> | <a href = "example.html">EXEMPLOS</a>
+	</div>
+	</div>
 	<div id = "corpo">
 	<h2>Detectação de aresta</h3>
 	<p> A detectação de aresta é um processo com o objetivo de encontrar mudanças bruscas no brilho ou na cor da imagem, matemáticamente falando, as suas descontinuidades, essas arestas podem significar mudanças de profundidade, iluminação, material. É frequentemente utilizada como pré-processamento para a seleção de características em imagens a serem utilizadas em processos de machine learn pois simplifica o conteúdo do imagem, capturando apenas o essencial, os "objetos" presentes nela.</p>
@@ -82,8 +86,8 @@
 	</figure>
 	<h3>Limite duplo</h3>
 	<p>Por fim, dado que já obtemos a arestas com 1 pixel de largura, iremos verificar qual faixa de intensidade de fato são arestas, mais uma vez, para cada pixel de nossa imagem, iremos verificar se está acima do limite inferior definido e se está abaixo do limite superior, caso esteja acima do limite superior, classificamos a aresta como uma aresta forte.</p>
-	<p>Valor inferior:<input type = "number" id = "low" placeholder = "60" value = "60">
-	Valor superior:<input type = "number" id = "high-threshold">
+	<p>Valor inferior:<input type = "number" id = "low" placeholder = "20" value = "20" min = "0" max = "100">
+	Valor superior:<input type = "number" id = "high" placeholder = "55" value = "55" min = "0" max = "100">
 	</p>
 	<button type = "button" id = "bt-threshold">Limite</button>
 	<button type = "button" id = "btr-threshold">Retornar</button>
@@ -95,7 +99,8 @@
 	<p>Utilize uma imagem do <a href="imgur.com">Imgur</a> ou do Github para funcionar, caso deseje utilizar imagens de outros sites, é necessário a instalação da extensão do Chrome <a  href ="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf">Allow Control Allow Origin</a>.Para uma visualização mais adequada, não utilize imagens com mais de 760 pixels de largura.</p>
 	<p>URL: <input type = "text" id = "url" placeholder="Coloque aqui seu url"> </p>
 	<button type = "button" id = "swap-rul" onclick="swap()">Enviar</button>
-	<p>Valor inferior: <input type = "number" id = "low-url" placeholder = "60" value = "60"></p>
+	<p>Valor inferior:<input type = "number" id = "low-url" placeholder = "20" value = "20" min = "0" max = "100">
+	Valor superior:<input type = "number" id = "high-url" placeholder = "55" value = "55" min = "0" max = "100"></p>
 	<button type = "button" id = "bt-url">Canny</button>
 	<button type = "button" id = "btr-url">Retornar</button>
 	<figure>
