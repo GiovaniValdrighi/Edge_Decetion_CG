@@ -1,50 +1,47 @@
 body{
-	background-color: #1A1A1D;
+	background-color: #D9D9D9;
 }
 
 p{
-	color: white;
 	font-family: "Arial";
 }
 
 li{
-	color: white;
 	font-family: "Arial";
 }
 
 h1, h2, h3, h4{
 	font-family:"Arial";
-	color: #C3073F;
+	color: #4484CE;
 }
 #arara{
 	margin-left: 5px;
 	width: 360px;
 	border-style: dashed;
-	border-color: #C3073F;
+	border-color: #4484CE;
 }
 #titulo{
 	padding: 20px 10px 10px 60px;	
 	font-family: "Arial";
-	color: #C3073F;
+	color: #4484CE;
 }
 #autor{
 	font-family: "Arial";
-	color: #C3073F;
+	color: #4484CE;
 	position: relative;
 	top: -20px;
 	left: 400px;
 }
 #fundo {
-	background-color: #1A1A1D;
+	background-color: #D9D9D9;
 	border-style: solid;
-	border-color: #C3073F;
+	border-color: #4484CE;
 	width: 800px;
-	position: absolute;
-	left: 250px;
+	margin: 0 auto;
 }
 
 #topo {
-	background-color: #1A1A1D;
+	background-color: #D9D9D9;
 	width: 800px;
 	height: 140px;
 	position: relative;
@@ -62,7 +59,7 @@ h1, h2, h3, h4{
 
 #corpo {
 	text-align: justify;
-	background-color: #1A1A1D;
+	background-color: #D9D9D9;
 	width: 750px;
 	margin: 5px 20px 5px 20px;	
 	position: relative;
@@ -71,14 +68,14 @@ h1, h2, h3, h4{
 
 #ariranha-original, #ariranha-preto-branco2, #ariranha-gaussian2, #ariranha-sobel2, #ariranha-supre2{
 	border-style: dashed;
-	border-color: #C3073F;
+	border-color: #4484CE;
 	position:relative;
 	left: -40px;
 }
 
 #ariranha-preto-branco, #ariranha-gaussian, #ariranha-sobel, #ariranha-supre, #ariranha-threshold{
 	border-style: dashed;
-	border-color: #C3073F;
+	border-color: #4484CE;
 	position: relative;
 	left: 350px;
 	top: -500px;
@@ -106,13 +103,13 @@ h1, h2, h3, h4{
 
 #canvas-url1, #canvas-url2{
 	border-style:dashed;
-	border-color:#C3073F;
+	border-color:#4484CE;
 	position: sticky;
 }
 
 a{
 	font-family: Arial;
-	color:#C3073F;
+	color:#4484CE;
 }
 
 #texto-topo{
