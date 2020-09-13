@@ -1,9 +1,4 @@
-body{
-	background-color: #D9D9D9;
-}
-
 #fundo {
-	background-color: #D9D9D9;
 	border-style: solid;
 	border-color: #4484CE;
 	width: 800px;
@@ -12,16 +7,15 @@ body{
 
 
 #topo {
-	background-color: #D9D9D9;
 	width: 800px;
-	height: 140px;
+	height: 80PX;
 	position: relative;
 	top: 10px;
 }
 
 #barra_topo{
 	border-style: solid;
-	border-color: #4E4E50;
+	border-color: #4484CE;
 	width: 795px;
 	height: 35px;
 	position: relative;
@@ -41,7 +35,6 @@ a{
 
 #corpo {
 	text-align: justify;
-	background-color: #D9D9D9;
 	width: 750px;
 	margin: 5px 20px 5px 20px;	
 	position: relative;
@@ -81,4 +74,9 @@ img{
 #construcao1, #construcao2{
 	position:relative;
 	left: 60px;
+}
+#rodape{
+	font-size: 12px;
+	font-family:"Arial";
+	padding-left: 12px;
 }
