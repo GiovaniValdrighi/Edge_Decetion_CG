@@ -23,7 +23,7 @@
 	<div id = "corpo">
 	<h2>Detecção de aresta</h3>
 	<p> A detecção de arestas é um processo com o objetivo de encontrar mudanças bruscas no brilho ou na cor da imagem, matemáticamente falando, as suas descontinuidades, essas arestas podem significar mudanças de profundidade, iluminação, material. É frequentemente utilizada como pré-processamento para a seleção de características em imagens a serem utilizadas em processos de machine learn pois simplifica o conteúdo do imagem, capturando apenas o essencial, os "objetos" presentes nela.</p>
-	<img src = "arara-azul.jpg" id = "arara"></img> <img src = "arara-azul-edge.jpg" id = "arara"></img>
+	<img src = "imgs/arara-azul.jpg" id = "arara"></img> <img src = "imgs/arara-azul-edge.jpg" id = "arara"></img>
 	<p>Os critérios para um algoritmo adequado para a detecção de arestas são:</p>
 	<ul>
 		<li>Detecção de arestas com uma baixa taxa de erro, ou seja, o algoritmo deve encontrar o máximo de arestas presentes na imagem.</li>
@@ -55,7 +55,7 @@
 	<p>Iremos utilizar a média igual a 0 e a variância é um parâmetro ajustável do algoritmo, podemos encontrar resultados finais melhores variando a variância da distribuição, nessa situação iremos utilizar o valor 1. Além disso, note que os nossos pixels formam uma matriz discreta, devemos portanto também discretizar nossa distribuição. </p>
 	<p id = "func-gaussian"> \( G(x,y) = \dfrac {exp(-\frac {x^2+y^2}{2 \sigma^2})} {2\pi \sigma^2} \)</p>
 	<p>Para discretizar o valor de cada pixel integramos a função de distribuição ao longo do pixel e utilizamos este valor, note que os valores da integral não são inteiros, então arredondamos de tal forma que os menores valores serão 1, a matriz a seguir apresenta quais serão os coeficientes utilizados. </p>
-	<img src = "matriz-gaussiana.jpg" id = "matriz-gaussian"></img> </br>
+	<img src = "imgs/matriz-gaussiana.jpg" id = "matriz-gaussian"></img> </br>
 	<button type = "button" id = "bt-gaussian">Gaussian</button>
 	<button type = "button" id = "btr-gaussian">Retornar</button>
 	<figure>
@@ -64,7 +64,7 @@
 	</figure>
 	<h3>Gradiente</h3>
 	<p>Agora que já possuimos a imagem em canal único e desfocada, o próximo passo é calcular a derivada de tom nos pixels. Note que novamente iremos utilizar algo que se aproxima a uma derivada, e não a definição real. Em nosso pixel \( (x,y) \) não conseguimos definir um \( h \to 0\) e calcular o valor das funções em \( f_x(x+h) \) e \( f_y(y+h) \), já que novamente estamos tratando com um espaço discreto. Para a aproximação, iremos utilizar o kernel de Sobel, que é uma matriz \( (3,3) \), e em cada pixel iremos calcular a diferença entre o pixel seguinte e o anterior. Observe as matrizes:</p>
-	<img src="sobel-x.jpg" id = "sobel-x"></img> <img src="sobel-y.jpg" id ="sobel-y"></img>
+	<img src = "imgs/sobel-x.jpg" id = "sobel-x"></img> <img src = "imgs/sobel-y.jpg" id ="sobel-y"></img>
 	<p>Note que possuimos duas matrizes, isto ocorre pois devemos calcular a derivada nas duas dimensões e com esses dois valores em cada um dos pixels, substituimos o valor pela nova magnitude definida por \( M = \sqrt {G_x^2 + G_y^2}\). Note que também precisamos calcular a direção deste gradiente, por isto criamos uma nova matriz com a mesma dimensão da matriz de pixels e preenchemos com a função \( \Theta = arctan (\dfrac {G_y}{G_x})\).</p>
 	<button type = "button" id = "bt-sobel">Sobel</button>
 	<button type = "button" id = "btr-sobel">Retornar</button>

@@ -12,7 +12,7 @@ var AriPB = new Image();
 AriOri.crossOrigin = '';
 AriPB.crossOrigin = '';
 	
-AriOri.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/ariranha.jpg';
+AriOri.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/ariranha.jpg';
 AriOri.onload = function(){
 	//exibindo imagens
 	ctxAriOri.drawImage(AriOri, 0, 0);
@@ -58,7 +58,7 @@ var AriG = new Image();
 AriOri2.crossOrigin = '';
 AriG.crossOrigin = '';
 	
-AriOri2.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/ariranha-pb.jpg';
+AriOri2.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/ariranha-pb.jpg';
 AriOri2.onload = function(){
 	//exibindo imagens
 	ctxAriOri2.drawImage(AriOri2, 0, 0);
@@ -129,7 +129,7 @@ var orient;
 AriOri3.crossOrigin = '';
 AriS.crossOrigin = '';
 	
-AriOri3.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/ariranha-g.jpg';
+AriOri3.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/ariranha-g.jpg';
 AriOri3.onload = function(){
 	//exibindo imagens
 	ctxAriOri3.drawImage(AriOri3, 0, 0);
@@ -205,7 +205,7 @@ var AriSP = new Image();
 AriOri4.crossOrigin = '';
 AriSP.crossOrigin = '';
 	
-AriOri4.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/ariranha-sp.jpg';
+AriOri4.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/ariranha-sp.jpg';
 AriOri4.onload = function(){
 	//exibindo imagens
 	ctxAriOri4.drawImage(AriOri4, 0, 0);
@@ -263,7 +263,7 @@ var AriT = new Image();
 AriOri5.crossOrigin = '';
 AriT.crossOrigin = '';
 	
-AriOri5.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/ariranha-sp2.jpg';
+AriOri5.src = 'https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/ariranha-sp2.jpg';
 AriOri5.onload = function(){
 	//exibindo imagens
 	ctxAriOri5.drawImage(AriOri5, 0, 0);
@@ -394,7 +394,7 @@ var URLOut = new Image();
 URLOri.crossOrigin = '';
 URLOut.crossOrigin = '';
 	
-URLOri.src = "https://raw.githubusercontent.com/GiovaniValdrighi/Edge_Decetion_CG/master/gamba.jpg";
+URLOri.src = "https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/gamba.jpg";
 function swap(){
 	URLOri.src = document.getElementById("url").value;
 }
