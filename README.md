@@ -2,7 +2,7 @@
 
 Project for the discipline of _Introduction to Computer Graphics_ at the undergraduate course of _Applied Mathematics_ at EMAp FGV. The first is the implementation of the _Canny algorithm_ to detect edges on images. An edge is the contour of an object on an image that is represented as a change of color or lightness. The algorithm focuses on detecting these changes in both horizontal and vertical directions. The implementation is available at the [link](https://giovanivaldrighi.github.io/edge-detection) and can be used with your own images.
 
-![Edge Detection](https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/arara-azul-edge.png)
+![Edge Detection](https://raw.githubusercontent.com/GiovaniValdrighi/edge-detection/master/docs/imgs/arara-azul-edge.jpg)
 
 # Files organization
 
